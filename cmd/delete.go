@@ -1,11 +1,11 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/spf13/cobra"
 )
@@ -13,28 +13,40 @@ import (
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Delete command",
+	Long:  `A command for deliting data`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		_, ok := index[key]
+		if ok {
+			logger.Info("Found key:", key)
+			delete(index, key)
+		} else {
+			s := fmt.Sprintf("%s not found!", key)
+			logger.Info(s)
+			return
+		}
+
+		for i, k := range data {
+			if k.Filename == key {
+				data = slices.Delete(data, i, i+1)
+				break
+			}
+		}
+
+		err := saveJSONFile(JSONFILE)
+		if err != nil {
+			logger.Warn("Error aving data", err)
+		}
+
+		s := fmt.Sprintf("Deleting key %s:", key)
+		logger.Info(s)
 	},
 }
 
+var key string
+
 func init() {
 	rootCmd.AddCommand(deleteCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deleteCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// deleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	deleteCmd.Flags().StringVarP(&key, "key", "k", "", "Key to delete")
+	deleteCmd.MarkFlagRequired("key")
 }
