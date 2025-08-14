@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
 	"math"
 	"os"
 	"slices"
@@ -20,7 +19,6 @@ var insertCmd = &cobra.Command{
 	Short: "insertCmd",
 	Long:  `A longer description `,
 	Run: func(cmd *cobra.Command, args []string) {
-		logger = GetLogger()
 
 		if file == "" {
 			logger.Info("Need a file to read!")
@@ -39,12 +37,12 @@ var insertCmd = &cobra.Command{
 
 		err := ProcessFile(file)
 		if err != nil {
-			logger.Error("Error processing:", "err:", err)
+			logger.Error("Error processing", "err", err)
 		}
 
 		err = saveJSONFile(JSONFILE)
 		if err != nil {
-			logger.Info("Error saving data:", "err:", err)
+			logger.Info("Error saving data", "err", err)
 		}
 
 	},
@@ -52,12 +50,9 @@ var insertCmd = &cobra.Command{
 var file string
 
 func init() {
-	logger := GetLogger()
 	rootCmd.AddCommand(insertCmd)
 	insertCmd.Flags().StringVarP(&file, "file", "f", "", "Filename to process")
 	insertCmd.MarkFlagRequired("file")
-	s := fmt.Sprintf("%d records in total.", len(data))
-	logger.Info(s)
 }
 
 func readFile(filepath string) ([]float64, error) {
@@ -80,7 +75,7 @@ func readFile(filepath string) ([]float64, error) {
 	for _, line := range lines {
 		tmp, err := strconv.ParseFloat(line[0], 64)
 		if err != nil {
-			logger.Error("Error reading:", line[0], err)
+			logger.Error("Error reading", line[0], err)
 			continue
 		}
 		values = append(values, tmp)

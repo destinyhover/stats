@@ -115,7 +115,7 @@ func initLogger() {
 //		// }
 //		return slog.Default()
 //	}
-func GetLogger() *slog.Logger {
+func getLogger() *slog.Logger {
 	if logger != nil {
 		return logger
 	}

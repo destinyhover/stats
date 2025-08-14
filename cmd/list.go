@@ -29,14 +29,10 @@ func init() {
 func list() {
 	sort.Sort(DFslice(data))
 	text, err := PrettyPrintJSONstream(data)
-	logger := GetLogger()
 	if err != nil {
 		logger.Error("in list()", "err", err)
 	}
 	fmt.Println(text)
-
-	s := fmt.Sprintf("%d records in total.", len(data))
-	logger.Info(s)
 }
 func PrettyPrintJSONstream(data interface{}) (string, error) {
 	buffer := new(bytes.Buffer)
