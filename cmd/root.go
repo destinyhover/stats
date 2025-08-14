@@ -71,6 +71,13 @@ func readJSONFile(filepath string) error {
 	}
 	return nil
 }
+func createIndex() {
+	index = make(map[string]int)
+	for i, k := range data {
+		key := k.Filename
+		index[key] = i
+	}
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -121,4 +128,10 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&enableLogging, "log", "l", true, "Logging information")
 	cobra.OnInitialize(initLogger)
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	err := readJSONFile(JSONFILE)
+	if err != nil && err != io.EOF {
+		return
+	}
+	createIndex()
 }
