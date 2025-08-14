@@ -23,7 +23,7 @@ type Entry struct {
 
 var logger *slog.Logger
 
-var JSONFILE = "./data.jsom"
+var JSONFILE = "./data.json"
 
 type DFslice []Entry
 
@@ -77,6 +77,11 @@ var rootCmd = &cobra.Command{
 	Use:   "stats",
 	Short: "A brief description of your application",
 	Long:  `A longer description `,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// l := slog.Default().With("cmd", cmd.CommandPath(), "pid", os.Getpid())
+		// ctx := slog.NewContext(cmd.Context(), l)
+		// cmd.SetContext(ctx)
+	},
 }
 
 func Execute() {
@@ -97,10 +102,23 @@ func initLogger() {
 
 }
 
+//	func logFromCmd(cmd *cobra.Command) *slog.Logger {
+//		// if l := slog.FromContext(cmd.Context()); l != nil {
+//		// 	return l
+//		// }
+//		return slog.Default()
+//	}
+func GetLogger() *slog.Logger {
+	if logger != nil {
+		return logger
+	}
+	return slog.Default()
+}
+
 var enableLogging bool
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&enableLogging, "log", "l", false, "Logging information")
+	rootCmd.PersistentFlags().BoolVarP(&enableLogging, "log", "l", true, "Logging information")
 	cobra.OnInitialize(initLogger)
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
